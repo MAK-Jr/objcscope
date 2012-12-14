@@ -35,7 +35,7 @@ Others: Node.js installed
   objcsope . > ocTags
 
 2. in your vimrc add this line:
-  let g:ocTagFile="<PAHT FOR YOUR tags file>"
+  let g:ocTagFile="PAHT FOR YOUR tags file"
 
 3. Move your cursor in the line which contains objc selector and press ctrl+g,
 objcscope will show up a list for you to select.
