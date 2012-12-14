@@ -12,7 +12,7 @@ OS: Linux/Unix, Mac OS X(Windows not works)
 
 Others: Node.js installed
 
-===Install===
+===Installation===
 
 1. Install Node.js
    See this page: https://github.com/creationix/nvm
