@@ -59,9 +59,11 @@ function! g:Dialog(str)
   return idx
 endfunction
 
+function! g:test()
+  echo "Testing."
+endfunction
 
-
-map <C-g>:call g:OCSCOPE_ListTags()<CR>
+map <C-g> :call g:OCSCOPE_ListTags()<CR>
 
 " set g:ocTagFile in vimrc or gvimrc
 ""let g:ocTagFile="/Users/Pitt/Desktop/Super-Weak-Boy/ocTags"
