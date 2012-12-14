@@ -1,0 +1,149 @@
+#!/usr/bin/env node
+
+var fs = require ('fs');
+
+// selector reg expression
+var reg = /[ ]*[-+][ ]*\([A-Za-z]+[ ]*\**\)([ \n\t]*([A-Za-z0-9]+):?([ ]*\([A-Za-z0-9]+[ ]*\**\)[ ]*[A-Za-z0-9]+)?)+/g;
+
+var createTagsForFile = function (file){
+  var string = '';
+  fs.readFile(file, function (err, data) {
+    if (err) throw err;
+    string += data;
+    var rets = string.match(reg);
+    //console.log(rets);
+    if (rets == null) return ;
+    for (var i = 0; i < rets.length; i++) {
+      var finalClub = getSelector(rets[i]);
+      rets[i] = rets[i].replace(/\+/g, '\\+');
+      rets[i] = rets[i].replace(/\*/g, '\\*');
+      rets[i] = rets[i].replace(/\(/g, '\\(');
+      rets[i] = rets[i].replace(/\)/g, '\\)');
+      var lines = getLineNoOfPattern(string, rets[i]);
+      for(var j = 0; j < lines.length; ++j){
+        var aLine = finalClub + '|' + lines[j] + '|' + file;
+        console.log(aLine);
+      }
+    };
+  });
+}
+
+var getLineNoOfPattern = function(string, p){
+  var lines = [];
+  var r = new RegExp(p,"g");
+  while ((match = r.exec(string)) != null) {
+    var pos = match.index;
+    //console.log(pos);
+    var lineNo = 1;
+    for (var i = 0; i < string.length; i++) {
+      if (string[i] == '\n') {
+        lineNo++;
+      }
+      if (i == pos ) break;
+    }
+    lines.push(lineNo);
+  }
+  return lines;
+};
+
+// Check for objc file type
+var isObjcFile = function(filename){
+  var r = /(\.m|\.h)$/;
+  var res = filename.match(r);
+  if (res == null) return false;
+  return true;
+}
+
+// walk throught a directory by using find command
+var exec = require('child_process').exec;
+var readDir =function(path){
+  /* Do a trik to escape spaces for command line use */
+  path = path.replace(/ /g,'\\ ');
+  var cmd = 'find ' + path;
+  exec(cmd,function (error, stdout, stderr) {
+    console.log(stderr);
+    var file_list = stdout.split('\n');
+
+    for (var i = 0; i < file_list.length; i++) {
+      if (isObjcFile(file_list[i])) {
+        file_list[i] = fs.realpathSync(file_list[i]);
+        createTagsForFile(file_list[i]);
+      }
+    };
+  });
+};
+
+var getSelector = function(string){
+  var res = string.match(/:/g);
+  var r;
+  if (res == null) {
+    r = /[ ]*\([A-Za-z0-9]+[ ]*\**\)[ ]*([A-Za-z0-9]+)/;
+    var arr = string.match(r);
+    //console.log(arr[1]);
+    if (arr != null) {
+      return arr[1];
+    }else{
+      return 'Pattern Not Found';
+    }
+  }else{
+    r = /[ ]*([A-Za-z0-9]+:)+/g;
+    var arr = string.match(r);
+    if (arr != null){
+      finalClub = arr.join('');
+      finalClub = finalClub.replace(/ /g,'');
+      //console.log(finalClub);
+      return finalClub;
+    }else{
+      return 'Pattern Not Found'
+    }
+  }
+};
+
+var searching = function(tagFile, pattern){
+
+  var finalClub = getSelector(pattern);
+  // read tagFile
+  var string = '';
+  var r = new RegExp(finalClub + '.*\\n', 'g'); // searching regex expression
+  string = fs.readFileSync(tagFile) + '';
+  var res = string.match(r);
+  return res;
+};
+
+var prettyResult = function(res){
+  var string = '';
+  var obj = {};
+  for (var i = 0; i < res.length; i++) {
+    var r = /(.*)\|(.*)\|(.*)/;
+    var s = res[i].match(r);
+    obj[s[3]] = s[2]; // s[3] - path; s[2] - pattern
+  };
+  var keys = Object.keys(obj);
+  for (var i = 0; i < keys.length; i++) {
+    if (i == 0) string += keys[i] + '|' + obj[keys[i]];
+    else string += '&&' + keys[i] + '|' + obj[keys[i]];
+  }
+  return string;
+};
+
+// searching Tags
+// usage: objcscope -S tagfile "pattern"
+if (process.argv[2] == "-S") {
+  var tagFile = process.argv[3];
+  tagFile = tagFile.replace(/ /g, '\\ ');
+  var pattern = process.argv[4];
+
+  var result = searching(tagFile, pattern);
+  if (result == null) return "Pattern Not Found";
+  var result = prettyResult(result);
+  console.log(result);
+}else{
+  //var s = "[self addChild: sprite\n z: 1];";
+  //var ret = getSelector(s);
+  //console.log(ret);
+  readDir(process.argv[2]);
+}
+//
+//createTagsForFile(process.argv[2]);
+//
+
