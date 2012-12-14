@@ -77,7 +77,9 @@ var getSelector = function(string){
   var res = string.match(/:/g);
   var r;
   if (res == null) {
-    r = /[ ]*\([A-Za-z0-9]+[ ]*\**\)[ ]*([A-Za-z0-9]+)/;
+    var brace = string.match(/\(/g);
+    if (brace == null) r = /[ ]+([A-Za-z0-9]+)[ ]*\]/;
+    else r = /[ ]*\([A-Za-z0-9]+[ ]*\**\)[ ]*([A-Za-z0-9]+)/;
     var arr = string.match(r);
     //console.log(arr[1]);
     if (arr != null) {
