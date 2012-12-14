@@ -21,7 +21,7 @@ Others: Node.js installed
 
    Copy objcscope to ~/ and run:
 
-    chmod 775 ~/objcscope
+  		chmod 775 ~/objcscope
 
    ADD ~/ to your $PATH variable
 
@@ -32,10 +32,12 @@ Others: Node.js installed
 ===Usage===
 
 1. Enter your directory and run
-  objcsope . > ocTags
+
+  		objcsope . > ocTags
 
 2. in your vimrc add this line:
-  let g:ocTagFile="PAHT FOR YOUR tags file"
+
+  		let g:ocTagFile="PAHT FOR YOUR tags file"
 
 3. Move your cursor in the line which contains objc selector and press ctrl+g,
 objcscope will show up a list for you to select.
