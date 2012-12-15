@@ -38,9 +38,9 @@ Others: Node.js installed
 2. in your vimrc add this line:
 
   		let g:ocTagFile="PAHT FOR YOUR tags file"
-
 3. Move your cursor in the line which contains objc selector and press ctrl+g,
 objcscope will show up a list for you to select.
+ctrl+d and enter a file name, this will open the file which has been parsed into the objc tag file
 
 ===About Me===
 

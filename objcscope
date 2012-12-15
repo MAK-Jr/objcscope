@@ -128,6 +128,23 @@ var prettyResult = function(res){
   return string;
 };
 
+// open file in tags with file name
+var openFileWithFileName = function(tagFile, fileName) {
+  var string = fs.readFileSync(tagFile) + '';
+  var fileName = fileName.replace(/\./g, '\\.');
+  var r = new RegExp('\\|[^\\|]*' + fileName + '\\n','g');
+  //var r = new RegExp("\\|[^\\|]*FlxG\\.m\\n",'g');
+  var result = string.match(r);
+  if (result == null) return "File Not Found";
+  return result[0];
+};
+
+// Note: Make sure we just want the first result in the list(Array)
+var getFileListWithFormat = function(s){
+  var res = s.replace(/(\||\n)/g, '');
+  return res;
+};
+
 // searching Tags
 // usage: objcscope -S tagfile "pattern"
 if (process.argv[2] == "-S") {
@@ -138,6 +155,15 @@ if (process.argv[2] == "-S") {
   var result = searching(tagFile, pattern);
   if (result == null) return "Pattern Not Found";
   var result = prettyResult(result);
+  console.log(result);
+  // usage: objcscope -f tagfile "filename"
+}else if(process.argv[2] == '-f'){ // Search file by file name
+  var tagFile = process.argv[3];
+  tagFile = tagFile.replace(/ /g, '\\ ');
+  var filename = process.argv[4];
+  var result = openFileWithFileName(tagFile, filename);
+  if (result == null) return "File Not Found";
+  var result = getFileListWithFormat(result);
   console.log(result);
 }else{
   //var s = "[self addChild: sprite\n z: 1];";

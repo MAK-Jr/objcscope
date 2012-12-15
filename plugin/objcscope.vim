@@ -1,6 +1,22 @@
 " File: objcscope
 " Author: Pitt Mak (Skeleton.MAK.Jr [at] gmail [dot] com)
 
+function g:OpenFile()
+  " show a dialog
+  call inputsave()
+  let filename = input('Enter File Name:')
+  call inputrestore()
+
+  " run objcscope command line
+  let stdout = system("objcscope -f ".g:ocTagFile." \"".filename."\"")
+  let path = stdout
+
+  if matchstr(path, "File Not Found") != ""
+  else
+    exe "e ".escape(path,' ')
+  endif
+endfunction
+
 function g:OCSCOPE_ListTags()
   let cur_line = line('.')
   let text = ''
@@ -159,7 +175,7 @@ endfunction
 
 
 map <C-g> :call g:OCSCOPE_ListTags()<CR>
-
+map <C-d> :call g:OpenFile()<CR>
 " set g:ocTagFile in vimrc or gvimrc
 ""let g:ocTagFile="/Users/Pitt/Desktop/Super-Weak-Boy/ocTags"
 
