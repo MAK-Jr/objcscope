@@ -3,7 +3,7 @@
 var fs = require ('fs');
 
 // selector reg expression
-var reg = /[ ]*[-+][ ]*\([A-Za-z]+[ ]*\**\)([ \n\t]*([A-Za-z0-9]+):?([ ]*\([A-Za-z0-9]+[ ]*\**\)[ ]*[A-Za-z0-9]+)?)+/g;
+var reg = /[ ]*[-+][ ]*\([A-Za-z]+[ ]*\**\)([ \n\t]*([A-Za-z0-9]+):?([ ]*\(([A-Za-z0-9]+[ ]*\**)+\)[ ]*[A-Za-z0-9]+)?)+/g;
 
 var createTagsForFile = function (file){
   var string = '';
