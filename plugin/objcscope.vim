@@ -6,11 +6,20 @@ function g:OCSCOPE_ListTags()
   let text = ''
   let line_text = getline(cur_line)
   let text = text.line_text." "
+
+  let back_ward_line = cur_line
+  let fore_ward_line = cur_line
+  " add lines foreward
   while matchstr(line_text,';\|{') == ""
-    let cur_line = cur_line + 1
-    let line_text = getline(cur_line)
+    let fore_ward_line = fore_ward_line + 1
+    let line_text = getline(fore_ward_line)
     let text = text.line_text." "
   endwhile
+
+  if matchstr(text, '\[\|\]') != ""
+    let cur_col = col(".")
+    let text = GetCloseBrackets(text, cur_col)
+  endif
 
   "execute objcscope
   let stdout = system("objcscope -S ".g:ocTagFile." \"".text."\"")
@@ -60,6 +69,78 @@ endfunction
 
 function! g:test()
   echo "Testing."
+endfunction
+
+function! ReverseString(s)
+  let len = strlen(a:s)
+  let ret = ""
+  for i in range(0, len)
+    let idx = len - i
+    let ret = ret.(a:s[idx])
+  endfor
+  return ret
+endfunction
+
+
+" Parse for closely selector
+function! GetCloseBrackets(s, idx)
+  let index = a:idx - 1
+  let len = strlen(a:s)
+  let resStr = ""
+  let str = ""
+  let i = index
+  let ignoreChar = 0
+
+  " search backward
+  while i >= 0
+    if a:s[i] == ']'
+      let ignoreChar = ignoreChar + 1
+    elseif a:s[i] == '[' && ignoreChar != 0
+      let ignoreChar = ignoreChar - 1
+    endif
+
+    " stop searching
+    if a:s[i] == '[' && ignoreChar == 0
+      break
+    endif
+
+    if ignoreChar == 0
+      let str = str.a:s[i]
+    endif
+
+    let i = i - 1
+  endwhile
+
+  " reverse string and append it to result
+  let str = ReverseString(str)
+  let resStr = resStr.str
+
+  let str = ""
+  let i = index + 1
+  let ignoreChar = 0
+  " search foreward
+  while i <= len - 1
+    if a:s[i] == '['
+      let ignoreChar = ignoreChar + 1
+    elseif a:s[i] == ']' && ignoreChar != 0
+      let ignoreChar = ignoreChar - 1
+    endif
+
+    if a:s[i] == ']' && ignoreChar == 0
+      break
+    endif
+
+    if ignoreChar == 0
+      let str = str.a:s[i]
+    endif
+    let i = i + 1
+  endwhile
+  " apeend it to result
+  let resStr = resStr.str
+
+  " add brackets
+  let resStr = "[".resStr."];"
+  return resStr
 endfunction
 
 map <C-g> :call g:OCSCOPE_ListTags()<CR>
