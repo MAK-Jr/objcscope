@@ -15,7 +15,6 @@ function g:OCSCOPE_ListTags()
   "execute objcscope
   let stdout = system("objcscope -S ".g:ocTagFile." \"".text."\"")
   let list = split(stdout,"&&")
-
   if len(list) <= 0
     return
   endif
@@ -23,7 +22,7 @@ function g:OCSCOPE_ListTags()
   for ele in list
     let l = split(ele,"|")
     if l != []
-      let dict[l[0]] = l[1]
+      let dict[l[1]] = l[0]
     endif
   endfor
 
@@ -39,7 +38,7 @@ function g:OCSCOPE_ListTags()
   let keys = keys(dict)
   let end = len(keys)
   for i in range(0, end - 1)
-    let f = pathshorten(keys[i])
+    let f = pathshorten(dict[keys[i]])
     let format = format."    ".i."        ".f."\n"
   endfor
 
@@ -47,8 +46,8 @@ function g:OCSCOPE_ListTags()
   let idx = str2nr(idx)
 
   " open file
-  exe "e! ".escape(keys[idx],' ')
-  exe "".dict[keys[idx]]
+  exe "e! ".escape(dict[keys[idx]],' ')
+  exe "".keys[idx]
 
 endfunction
 
