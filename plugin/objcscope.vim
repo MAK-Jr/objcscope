@@ -43,13 +43,13 @@ function g:OCSCOPE_ListTags()
   ""endif
   " go through all items
   let format = "[Objcscope Author: Pitt Mak eMail: Skeleton.MAK.Jr@gmail.com]\n"
-  let format = format."    Index    Line    FileName\n"
+  let format = format."    Index     Line      FileName\n"
   let keys = keys(dict)
   let end = len(keys)
   for i in range(0, end - 1)
     let f = pathshorten(dict[keys[i]])
     let keys[i] = substitute(keys[i],"\\n","","")
-    let format = format."    ".i."        ".keys[i]."      ".f."\n"
+    let format = format."    ".GetPrettyFormat(i.'', 10).GetPrettyFormat(keys[i].'', 10).f."\n"
   endfor
 
   let idx = g:Dialog(format)
@@ -144,6 +144,19 @@ function! GetCloseBrackets(s, idx)
   let resStr = "[".resStr."];"
   return resStr
 endfunction
+
+function GetPrettyFormat(s, w)
+  let len = strlen(a:s)
+  let spaceCount = a:w - len
+  let i = 1
+  let res = "".a:s
+  while i <= spaceCount
+    let res = res." "
+    let i = i + 1
+  endwhile
+  return res
+endfunction
+
 
 map <C-g> :call g:OCSCOPE_ListTags()<CR>
 
