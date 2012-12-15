@@ -132,6 +132,7 @@ var prettyResult = function(res){
 var openFileWithFileName = function(tagFile, fileName) {
   var string = fs.readFileSync(tagFile) + '';
   var fileName = fileName.replace(/\./g, '\\.');
+  var fileName = fileName.replace(/\+/g, '\\+');
   var r = new RegExp('\\|[^\\|]*' + fileName + '\\n','g');
   //var r = new RegExp("\\|[^\\|]*FlxG\\.m\\n",'g');
   var result = string.match(r);
