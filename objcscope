@@ -2,8 +2,12 @@
 
 var fs = require ('fs');
 
+var ocTags = "ocTags";
+
 // selector reg expression
 var reg = /[ ]*[-+][ ]*\(([A-Za-z]+[ ]*\**)+\)([ \n\t]*([A-Za-z0-9]+):?([ ]*\(([A-Za-z0-9]+[ ]*\**)+\)[ ]*[A-Za-z0-9]+)?)+/g;
+
+var callReg = /[ \t]*[^A-Za-z0-9=\n]*\[.*\][ \t]*;/g;
 
 var createTagsForFile = function (file){
   var string = '';
@@ -11,8 +15,10 @@ var createTagsForFile = function (file){
     if (err) throw err;
     string += data;
     var rets = string.match(reg);
-    console.log('|' + file); // log filename once for every file name
+    fs.appendFileSync(ocTags, "|" + file + "\n"); // write once for every file
     if (rets == null) return ;
+
+    // generate ocTags
     for (var i = 0; i < rets.length; i++) {
       var finalClub = getSelector(rets[i]);
       rets[i] = rets[i].replace(/\+/g, '\\+');
@@ -21,10 +27,10 @@ var createTagsForFile = function (file){
       rets[i] = rets[i].replace(/\)/g, '\\)');
       var lines = getLineNoOfPattern(string, rets[i]);
       for(var j = 0; j < lines.length; ++j){
-        var aLine = finalClub + '|' + lines[j] + '|' + file;
-        console.log(aLine);
+        var aLine = finalClub + '|' + lines[j] + '|' + file + '\n';
+        fs.appendFileSync(ocTags, aLine);
       }
-    };
+    }
   });
 }
 
@@ -170,9 +176,12 @@ if (process.argv[2] == "-S") {
   //var s = "[self addChild: sprite\n z: 1];";
   //var ret = getSelector(s);
   //console.log(ret);
+
+  // delete ocTags and callTags
+  if (fs.existsSync(ocTags)) {
+    fs.unlinkSync(ocTags);
+  }
+
   readDir(process.argv[2]);
 }
-//
-//createTagsForFile(process.argv[2]);
-//
 

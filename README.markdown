@@ -33,7 +33,8 @@ Others: Node.js installed
 
 1. Enter your directory and run
 
-  		objcsope . > ocTags
+  		objcsope . 
+  	This command will create "ocTags" in current directory
 
 2. in your vimrc add this line:
 
