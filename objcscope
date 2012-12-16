@@ -11,7 +11,7 @@ var createTagsForFile = function (file){
     if (err) throw err;
     string += data;
     var rets = string.match(reg);
-    //console.log(rets);
+    console.log('|' + file); // log filename once for every file name
     if (rets == null) return ;
     for (var i = 0; i < rets.length; i++) {
       var finalClub = getSelector(rets[i]);
