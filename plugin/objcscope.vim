@@ -176,6 +176,10 @@ endfunction
 
 map <C-g> :call g:OCSCOPE_ListTags()<CR>
 map <C-d> :call g:OpenFile()<CR>
-" set g:ocTagFile in vimrc or gvimrc
+" open current file in a newtab
+let curFile = expand('%:p')
+map <S-t> :exe ":tabnew! ".curFile<CR>
+
+""set g:ocTagFile in vimrc or gvimrc
 ""let g:ocTagFile="/Users/Pitt/Desktop/Super-Weak-Boy/ocTags"
 
