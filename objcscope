@@ -8,7 +8,7 @@ var callTags = "callTags";
 // selector reg expression
 var reg = /[ ]*[-+][ ]*\(([A-Za-z]+[ ]*\**)+\)([ \n\t]*([A-Za-z0-9]+):?([ ]*\(([A-Za-z0-9]+[ ]*\**)+\)[ ]*[A-Za-z0-9]+)?)+/g;
 
-var callReg = /\[[^;\(\)]*\][ \t]*/g;
+var callReg = /\[[^;]*\][ \t]*[\(\)\{]*/g;
 
 var createTagsForFile = function (file){
   var string = '';
@@ -73,6 +73,7 @@ var escapeSpecialCharForReg = function(s){
     s = s.replace(/\+/g, '\\+');
     s = s.replace(/\|/g, '\\|');
     s = s.replace(/\-/g, '\\-');
+    s = s.replace(/\./g, '\\.');
     return s;
 };
 
