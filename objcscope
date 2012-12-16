@@ -3,11 +3,12 @@
 var fs = require ('fs');
 
 var ocTags = "ocTags";
+var callTags = "callTags";
 
 // selector reg expression
 var reg = /[ ]*[-+][ ]*\(([A-Za-z]+[ ]*\**)+\)([ \n\t]*([A-Za-z0-9]+):?([ ]*\(([A-Za-z0-9]+[ ]*\**)+\)[ ]*[A-Za-z0-9]+)?)+/g;
 
-var callReg = /[ \t]*[^A-Za-z0-9=\n]*\[.*\][ \t]*;/g;
+var callReg = /\[[^;\(\)]*\][ \t]*/g;
 
 var createTagsForFile = function (file){
   var string = '';
@@ -31,8 +32,75 @@ var createTagsForFile = function (file){
         fs.appendFileSync(ocTags, aLine);
       }
     }
+
+    // pares selector calls
+    var matchs = string.match(callReg);
+    if (matchs == null) return ;
+
+    for (var i = 0; i < matchs.length; i++) {
+      var formatItem = escapeSpecialCharForReg(matchs[i]);
+      var lines = getLineNoOfPattern(string, formatItem);
+
+      // create array of index '['
+      var bracketsReg = /\[/g;
+      var array = []; // array of index of '['
+      while ((match = bracketsReg.exec(matchs[i])) != null) {
+        var pos = match.index;
+        array.push(pos);
+      }
+      // Time to parse selectors call string
+      var res = getListOfSelectorCalls(matchs[i], array);
+      for (var j = 0; j < res.length; j++) {
+        res[j] = getSelector(res[j]);
+        for (var k = 0; k < lines.length; k++) {
+          var aLine = res[j] + '|' + lines[k] + '|' + file + '\n';
+          fs.appendFileSync(callTags, aLine);
+        };
+      };
+    }
+
   });
-}
+};
+
+// Escape special characters liek for regex string
+var escapeSpecialCharForReg = function(s){
+    s = s.replace(/\//g, '\\/');
+    s = s.replace(/\[/g, '\\[');
+    s = s.replace(/\]/g, '\\]');
+    s = s.replace(/\(/g, '\\(');
+    s = s.replace(/\)/g, '\\)');
+    s = s.replace(/\*/g, '\\*');
+    s = s.replace(/\+/g, '\\+');
+    s = s.replace(/\|/g, '\\|');
+    s = s.replace(/\-/g, '\\-');
+    return s;
+};
+
+// return an array of string
+// RETURN: [self alloc], [self update:(int)time]
+var getListOfSelectorCalls = function(s, listOfIndex){
+  var len  = s.length;
+  var array = [];
+  for (var i = 0; i < listOfIndex.length; i++) {
+    var string = '';
+    var ignoreChar = 0;
+    for (var j = listOfIndex[i] + 1; j < s.length; j++) {
+
+      if (s[j] == '['){
+        ignoreChar++;
+      }else if(s[j] == ']'){
+        ignoreChar--;
+        continue;
+      }
+
+      if (ignoreChar == 0) {
+        string += s[j];
+      }
+    }
+    array.push('[' + string + ']');
+  };
+  return array;
+};
 
 var getLineNoOfPattern = function(string, p){
   var lines = [];
@@ -164,6 +232,15 @@ if (process.argv[2] == "-S") {
   var result = prettyResult(result);
   console.log(result);
   // usage: objcscope -f tagfile "filename"
+}else if(process.argv[2] == "-L"){
+  var tagFile = process.argv[3];
+  tagFile = tagFile.replace(/ /g, '\\ ');
+  var pattern = process.argv[4];
+
+  var result = searching(tagFile, pattern);
+  if (result == null) return "Pattern Not Found";
+  var result = prettyResult(result);
+  console.log(result);
 }else if(process.argv[2] == '-f'){ // Search file by file name
   var tagFile = process.argv[3];
   tagFile = tagFile.replace(/ /g, '\\ ');
@@ -180,6 +257,10 @@ if (process.argv[2] == "-S") {
   // delete ocTags and callTags
   if (fs.existsSync(ocTags)) {
     fs.unlinkSync(ocTags);
+  }
+
+  if (fs.existsSync(callTags)) {
+    fs.unlinkSync(callTags);
   }
 
   readDir(process.argv[2]);

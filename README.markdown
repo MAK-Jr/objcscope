@@ -39,9 +39,17 @@ Others: Node.js installed
 2. in your vimrc add this line:
 
   		let g:ocTagFile="PAHT FOR YOUR tags file"
+  		let g:callTagFile="PATH FOR YOUR call tags file"
+
+	For me, It's something like this  	
+	
+  	`let g:ocTagFile="/Users/Pitt/Apps/ericjohnson-canabalt-ios-ef43b7d/ocTags"`
+  		
+	`let g:callTagFile="/Users/Pitt/Apps/ericjohnson-canabalt-ios-ef43b7d/callTags"`
+
 3. Move your cursor in the line which contains objc selector and press `ctrl+g`,
 objcscope will show up a list for you to select.
-`ctrl+d` and enter a file name, this will open the file which has been parsed into the objc tag file
+`ctrl+d` and enter a file name, this will open the file which has been parsed into the objc tag file, and `ctrl+r` to search selectors called.
 
 ===About Me===
 
