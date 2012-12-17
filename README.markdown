@@ -51,7 +51,7 @@ Others: Node.js installed
 objcscope will show up a list for you to select.
 `ctrl+d` and enter a file name, this will open the file which has been parsed into the objc tag file, and `ctrl+r` to search selectors called.
 
-4. after press `ctrl+g` or `ctrl+r`, if you want to exit whout chosing any thing, enter `q`.
+4. after press `ctrl+g` or `ctrl+r`, if you want to exit whout chosing any thing, enter `q`. press `ctrl+o` to return back. Or execute command `:bp` to return back.
 
 ===About Me===
 
