@@ -37,6 +37,7 @@ function g:ListCallTags()
     let text = GetCloseBrackets(text, cur_col)
   endif
 
+  " command line wants \" to escape
   let text = escape(text, "\"")
 
   "execute objcscope
@@ -101,7 +102,9 @@ function g:OCSCOPE_ListTags()
     let text = GetCloseBrackets(text, cur_col)
   endif
 
+  " command line wants \" to escape
   let text = escape(text, "\"")
+
   "execute objcscope
   let stdout = system("objcscope -S ".g:ocTagFile." \"".text."\"")
 
