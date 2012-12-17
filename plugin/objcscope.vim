@@ -37,6 +37,8 @@ function g:ListCallTags()
     let text = GetCloseBrackets(text, cur_col)
   endif
 
+  let text = escape(text, "\"")
+
   "execute objcscope
   let stdout = system("objcscope -L ".g:callTagFile." \"".text."\"")
   let list = split(stdout,"&&")
@@ -99,8 +101,10 @@ function g:OCSCOPE_ListTags()
     let text = GetCloseBrackets(text, cur_col)
   endif
 
+  let text = escape(text, "\"")
   "execute objcscope
   let stdout = system("objcscope -S ".g:ocTagFile." \"".text."\"")
+
   let list = split(stdout,"&&")
   if len(list) <= 0
     return

@@ -74,6 +74,9 @@ var escapeSpecialCharForReg = function(s){
     s = s.replace(/\|/g, '\\|');
     s = s.replace(/\-/g, '\\-');
     s = s.replace(/\./g, '\\.');
+    s = s.replace(/\,/g, '\\,');
+    s = s.replace(/\@/g, '\\@');
+    s = s.replace(/\"/g, '\\"');
     return s;
 };
 
@@ -232,7 +235,7 @@ if (process.argv[2] == "-S") {
   if (result == null) return "Pattern Not Found";
   var result = prettyResult(result);
   console.log(result);
-  // usage: objcscope -f tagfile "filename"
+  // usage: objcscope -L tagfile "filename"
 }else if(process.argv[2] == "-L"){
   var tagFile = process.argv[3];
   tagFile = tagFile.replace(/ /g, '\\ ');
