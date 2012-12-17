@@ -72,6 +72,9 @@ function g:ListCallTags()
   endfor
 
   let idx = g:Dialog(format)
+  if idx == 'q'
+      return
+  endif
   let idx = str2nr(idx)
 
   " open file
@@ -138,6 +141,10 @@ function g:OCSCOPE_ListTags()
   endfor
 
   let idx = g:Dialog(format)
+  if idx == 'q'
+      return
+  endif
+
   let idx = str2nr(idx)
 
   " open file
