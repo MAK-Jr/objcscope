@@ -38,9 +38,12 @@ var createTagsForFile = function (file){
     if (matchs == null) return ;
 
     for (var i = 0; i < matchs.length; i++) {
+      //console.log(matchs[i]);
       var formatItem = escapeSpecialCharForReg(matchs[i]);
       var lines = getLineNoOfPattern(string, formatItem);
 
+       // [Important]Bug fix: get rid of NSString literal
+      matchs[i] = matchs[i].replace(/@".*\n*"/g, '');
       // create array of index '['
       var bracketsReg = /\[/g;
       var array = []; // array of index of '['
@@ -64,6 +67,7 @@ var createTagsForFile = function (file){
 
 // Escape special characters liek for regex string
 var escapeSpecialCharForReg = function(s){
+    s = s.replace(/\\/g, '\\\\');
     s = s.replace(/\//g, '\\/');
     s = s.replace(/\[/g, '\\[');
     s = s.replace(/\]/g, '\\]');
@@ -72,11 +76,16 @@ var escapeSpecialCharForReg = function(s){
     s = s.replace(/\*/g, '\\*');
     s = s.replace(/\+/g, '\\+');
     s = s.replace(/\|/g, '\\|');
-    s = s.replace(/\-/g, '\\-');
     s = s.replace(/\./g, '\\.');
-    s = s.replace(/\,/g, '\\,');
-    s = s.replace(/\@/g, '\\@');
-    s = s.replace(/\"/g, '\\"');
+    s = s.replace(/\^/g, '\\^');
+    s = s.replace(/\$/g, '\\$');
+    s = s.replace(/\?/g, '\\?');
+    s = s.replace(/\=/g, '\\=');
+    s = s.replace(/\!/g, '\\!');
+    s = s.replace(/\:/g, '\\:');
+    s = s.replace(/\{/g, '\{');
+    s = s.replace(/\}/g, '\}');
+
     return s;
 };
 
