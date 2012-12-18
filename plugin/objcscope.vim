@@ -2,7 +2,36 @@
 " Author: Pitt Mak (Skeleton.MAK.Jr [at] gmail [dot] com)
 
 function g:reduceMessage(s)
-    let res = substitute(a:s, '@".*"','','g')
+    let len = strlen(a:s)
+    let res = ''
+    let c = 0
+    let ignoreChar = 0
+    let i = 0
+    while i <= len
+      if (a:s[i] == '@' || a:s[i] == '"') && ignoreChar == 0
+        let c = c + 1
+        let i = i + 1
+        continue
+      endif
+
+      if c == 2 && ignoreChar == 0
+        let ignoreChar = 1
+        let i = i + 1
+        continue
+      endif
+
+      if i > 0 && a:s[i] == '"' && a:s[i] !=  "\\" && ignoreChar == 1
+        let ignoreChar = 0
+        let c = 0
+        let i = i + 1
+        continue
+      endif
+
+      if ignoreChar == 0
+        let res = res.a:s[i]
+      endif
+      let i = i + 1
+    endwhile
     return res
 endfunction
 
@@ -47,7 +76,6 @@ function g:ListCallTags()
   endif
 
   let text = g:reduceMessage(text)
-  echo text
   " command line wants \" to escape
   let text = escape(text, '"')
 
@@ -116,6 +144,8 @@ function g:OCSCOPE_ListTags()
     let cur_col = col(".")
     let text = GetCloseBrackets(text, cur_col)
   endif
+
+  let text = g:reduceMessage(text)
 
   " command line wants \" to escape
   let text = escape(text, "\"")

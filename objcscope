@@ -10,6 +10,35 @@ var reg = /[ ]*[-+][ ]*\(([A-Za-z]+[ ]*\**)+\)([ \n\t]*([A-Za-z0-9]+):?([ ]*\(([
 
 var callReg = /\[[^=;\{\}]*\][ \t]*/g;
 
+var changeLiteralNSString = function(s){
+  var res = '';
+  var count = 0;
+  var ignoreChar = false;
+  for (var i = 0; i < s.length; i++) {
+    if ((s[i] == '@' || s[i] == '"') && !ignoreChar){
+      count++;
+      continue;
+    }
+
+    if (count == 2 && !ignoreChar) {
+      ignoreChar = true;
+      continue;
+    }
+
+    if (i > 0 && s[i] == '"' && s[i-1] != '\\' && ignoreChar){
+      ignoreChar = false;
+      count = 0;
+      continue;
+    }
+
+    if (!ignoreChar) {
+      res += s[i];
+    }
+  }
+
+  return res;
+};
+
 var createTagsForFile = function (file){
   var string = '';
   fs.readFile(file, function (err, data) {
@@ -42,8 +71,9 @@ var createTagsForFile = function (file){
       var formatItem = escapeSpecialCharForReg(matchs[i]);
       var lines = getLineNoOfPattern(string, formatItem);
 
-       // [Important]Bug fix: get rid of NSString literal
-      matchs[i] = matchs[i].replace(/@".*\n*"/g, '');
+      // [IMPORTANT] : Delete NSString literal
+      matchs[i] = changeLiteralNSString(matchs[i]);
+
       // create array of index '['
       var bracketsReg = /\[/g;
       var array = []; // array of index of '['
