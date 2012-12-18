@@ -7,6 +7,10 @@ function g:OpenFile()
   let filename = input('Enter File Name:')
   call inputrestore()
 
+  if filename == "q"
+    return
+  endif
+
   " run objcscope command line
   let stdout = system("objcscope -f ".g:ocTagFile." \"".filename."\"")
   let path = stdout
