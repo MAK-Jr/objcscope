@@ -182,6 +182,9 @@ var getSelector = function(string){
 var searching = function(tagFile, pattern){
 
   var finalClub = getSelector(pattern);
+  if (finalClub == 'Pattern Not Found') {
+    return 'Pattern Not Found';
+  }
   // read tagFile
   var string = '';
   var r = new RegExp(finalClub + '\\|.*\\n', 'g'); // searching regex expression

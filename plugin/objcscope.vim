@@ -1,6 +1,11 @@
 " File: objcscope
 " Author: Pitt Mak (Skeleton.MAK.Jr [at] gmail [dot] com)
 
+function g:reduceMessage(s)
+    let res = substitute(a:s, '@".*"','','g')
+    return res
+endfunction
+
 function g:OpenFile()
   " show a dialog
   call inputsave()
@@ -41,11 +46,14 @@ function g:ListCallTags()
     let text = GetCloseBrackets(text, cur_col)
   endif
 
+  let text = g:reduceMessage(text)
+  echo text
   " command line wants \" to escape
-  let text = escape(text, "\"")
+  let text = escape(text, '"')
 
   "execute objcscope
-  let stdout = system("objcscope -L ".g:callTagFile." \"".text."\"")
+  let cmd = "objcscope -L ".g:callTagFile." \"".text."\""
+  let stdout = system(cmd)
   let list = split(stdout,"&&")
   if len(list) <= 0
     return
@@ -222,6 +230,8 @@ function! GetCloseBrackets(s, idx)
       let ignoreChar = ignoreChar + 1
     elseif a:s[i] == ']' && ignoreChar != 0
       let ignoreChar = ignoreChar - 1
+      let i = i + 1
+      continue
     endif
 
     if a:s[i] == ']' && ignoreChar == 0
