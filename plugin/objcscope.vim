@@ -82,6 +82,7 @@ function g:ListCallTags()
   "execute objcscope
   let cmd = "objcscope -L ".g:callTagFile." \"".text."\""
   let stdout = system(cmd)
+
   let list = split(stdout,"&&")
   if len(list) <= 0
     return
@@ -152,7 +153,6 @@ function g:OCSCOPE_ListTags()
 
   "execute objcscope
   let stdout = system("objcscope -S ".g:ocTagFile." \"".text."\"")
-
   let list = split(stdout,"&&")
   if len(list) <= 0
     return

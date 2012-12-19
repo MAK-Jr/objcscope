@@ -6,7 +6,7 @@ var ocTags = "ocTags";
 var callTags = "callTags";
 
 // selector reg expression
-var reg = /[ ]*[-+][ ]*\(([A-Za-z]+[ ]*\**)+\)([ \n\t]*([A-Za-z0-9]+):?([ ]*\(([A-Za-z0-9]+[ ]*\**)+\)[ ]*[A-Za-z0-9]+)?)+/g;
+var reg = /[ ]*[-+][ ]*\([^\n]+\)([ \n\t]*([A-Za-z0-9]+):?([ ]*\(([A-Za-z0-9]+[ ]*\**)+\)[ ]*[A-Za-z0-9]+)?)+/g;
 
 var callReg = /\[[^=;\{\}]*\][ \t]*/g;
 
@@ -196,7 +196,7 @@ var getSelector = function(string){
   if (res == null) {
     var brace = string.match(/\(/g);
     if (brace == null) r = /[ ]+([A-Za-z0-9]+)[ ]*\]/;
-    else r = /[ ]*\([A-Za-z0-9]+[ ]*\**\)[ ]*([A-Za-z0-9]+)/;
+    else r = /[ ]*\([^\n]+\)[ ]*([A-Za-z0-9]+)/;
     var arr = string.match(r);
     //console.log(arr[1]);
     if (arr != null) {
